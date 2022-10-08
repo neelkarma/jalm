@@ -1,0 +1,67 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "**.rs"
+      - "Cargo.toml"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-windows:
+    name: build-windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Setup CI Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release
+      - name: Publish Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: jalm-windows.exe
+          path: target/release/jalm.exe
+  build-linux:
+    name: build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Setup CI Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release
+      - name: Publish Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: jalm-linux
+          path: target/release/jalm
+  build-macos:
+    name: build-macos
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Setup CI Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release
+      - name: Publish Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: jalm-macos
+          path: target/release/jalm
