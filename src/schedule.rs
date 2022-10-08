@@ -1,10 +1,9 @@
 use std::str::FromStr;
 
+use anyhow::{Context, Result};
 use chrono::{DateTime, Local};
 use colored::{Color, Colorize};
 use cron::Schedule as CronSchedule;
-
-use crate::error::Result;
 
 const BLOCK: char = '\u{2588}';
 
@@ -24,7 +23,7 @@ impl Schedule {
     }
 
     pub fn try_new(title: Option<String>, cron_expr: &str) -> Result<Self> {
-        Ok(Self::new(title, CronSchedule::from_str(cron_expr)?))
+        Ok(Self::new(title, CronSchedule::from_str(cron_expr).context("Invalid cron expression. The required format is \"sec min day(month) month day(week) year\"")?))
     }
 
     pub fn next(&self) -> Option<DateTime<Local>> {

@@ -1,11 +1,10 @@
+use anyhow::Result;
 use clap::Parser;
 
 use crate::args::Cli;
-use crate::error::Result;
 use crate::schedule::{RenderOpts, Schedule};
 
 mod args;
-mod error;
 mod schedule;
 
 fn main() -> Result<()> {
