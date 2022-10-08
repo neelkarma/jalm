@@ -10,7 +10,6 @@ mod schedule;
 
 fn main() -> Result<()> {
     let args = Cli::parse();
-    dbg!(args.color);
     let schedule = Schedule::try_new(args.title, &args.cron_expr)?;
     println!(
         "{}",
