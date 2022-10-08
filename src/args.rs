@@ -31,7 +31,7 @@ impl Into<Color> for CliColor {
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// The cron expression to use
+    /// The cron expression to use, in the format "sec min day(month) month day(week) year"
     pub cron_expr: String,
     /// An optional title that replaces the default date range display
     #[arg(short, long)]
