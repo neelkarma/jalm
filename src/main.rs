@@ -1,23 +1,23 @@
 use clap::Parser;
-use error::Result;
-use schedule::Schedule;
 
+use crate::args::Cli;
+use crate::error::Result;
+use crate::schedule::{RenderOpts, Schedule};
+
+mod args;
 mod error;
 mod schedule;
 
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    cron_expr: String,
-    #[arg(short, long)]
-    title: Option<String>,
-    #[arg(short, long, default_value_t = 50)]
-    width: usize,
-}
-
 fn main() -> Result<()> {
     let args = Cli::parse();
+    dbg!(args.color);
     let schedule = Schedule::try_new(args.title, &args.cron_expr)?;
-    println!("{}", schedule.render(args.width));
+    println!(
+        "{}",
+        schedule.render(RenderOpts {
+            width: args.width,
+            color: args.color.into()
+        })
+    );
     Ok(())
 }

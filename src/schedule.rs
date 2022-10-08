@@ -1,12 +1,17 @@
 use std::str::FromStr;
 
 use chrono::{DateTime, Local};
-use colored::Colorize;
+use colored::{Color, Colorize};
 use cron::Schedule as CronSchedule;
 
 use crate::error::Result;
 
 const BLOCK: char = '\u{2588}';
+
+pub struct RenderOpts {
+    pub width: usize,
+    pub color: Color,
+}
 
 pub struct Schedule {
     title: Option<String>,
@@ -30,7 +35,7 @@ impl Schedule {
         self.cron.upcoming(Local).next_back()
     }
 
-    pub fn render(&self, width: usize) -> String {
+    pub fn render(&self, opts: RenderOpts) -> String {
         let mut out = String::new();
 
         let next_opt = self.next();
@@ -48,21 +53,34 @@ impl Schedule {
             let elapsed = Local::now().timestamp() - prev.timestamp();
             let percent = elapsed as f64 / total as f64;
 
-            let blocks_filled = ((width as f64 * percent).floor()) as usize;
-            let blocks_unfilled = width - blocks_filled;
+            let blocks_filled = ((opts.width as f64 * percent).floor()) as usize;
+            let blocks_unfilled = opts.width - blocks_filled;
 
-            out.push_str(&BLOCK.to_string().repeat(blocks_filled).to_string());
+            out.push_str(
+                &BLOCK
+                    .to_string()
+                    .repeat(blocks_filled)
+                    .color(opts.color)
+                    .to_string(),
+            );
             out.push_str(
                 &BLOCK
                     .to_string()
                     .repeat(blocks_unfilled)
+                    .color(opts.color)
                     .dimmed()
                     .to_string(),
             );
             out.push_str(&format!(" {:.0}%", percent * 100.).bold().to_string());
             out.push('\n');
         } else {
-            out.push_str(&BLOCK.to_string().repeat(width).bright_white().to_string());
+            out.push_str(
+                &BLOCK
+                    .to_string()
+                    .repeat(opts.width)
+                    .color(opts.color)
+                    .to_string(),
+            );
             out.push_str(&" 100%\n".bold().to_string());
         }
 
